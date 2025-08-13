@@ -1,5 +1,5 @@
 Agri-Agentic-Suite: The Agentic AI Suite for Agriculture
-HarvestAI is an open-source suite of three distinct, containerized AI prototypes designed to provide critical decision support for the agricultural sector. This project explores different agentic AI solutions to address real-world challenges faced by farmers, from accessing information to financial planning and crop health management.
+Agri-Agentic-Suite is an open-source suite of three distinct, containerized AI prototypes designed to provide critical decision support for the agricultural sector. This project explores different agentic AI solutions to address real-world challenges faced by farmers, from accessing information to financial planning and crop health management.
 
 The entire ecosystem is designed to run locally, powered by open-source Large Language and Vision Models, and is orchestrated with Docker for easy, one-command deployment.
 
