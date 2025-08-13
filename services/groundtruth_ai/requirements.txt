@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+pandas
+litellm
+#twilio
+#python-multipart

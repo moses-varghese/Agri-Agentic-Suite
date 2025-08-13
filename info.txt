@@ -1,0 +1,5 @@
+Aggressively prune the system: This command will remove all stopped containers, all unused networks, all dangling images, and all build cache. 
+Warning: This will clean up all unused Docker data on your system, not just for this project.
+
+Bash
+docker system prune -af

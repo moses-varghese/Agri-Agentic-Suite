@@ -1,0 +1,228 @@
+:root {
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --primary-color: #4caf50;
+  --container-bg: #1e1e1e;
+  --input-bg: #2a2a2a;
+  --border-color: #444;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--container-bg);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+header h1 {
+  color: var(--primary-color);
+  margin: 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="number"] {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.result {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: var(--input-bg);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+
+.result h2 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+.result ul {
+  padding-left: 20px;
+}
+
+.result li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.error {
+  border-left-color: #f44336;
+  color: #f44336;
+}
+
+.navigation {
+  margin-top: 1rem;
+}
+.navigation a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.navigation a:hover {
+  text-decoration: underline;
+}
+
+/* Chat Window Styles */
+.chat-window {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chat-message {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  max-width: 80%;
+}
+
+.chat-message.ai {
+  background-color: var(--input-bg);
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+}
+
+.chat-message.user {
+  background-color: var(--primary-color);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+.chat-message p {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Chat Form Styles */
+.chat-form {
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.chat-form input {
+  flex-grow: 1;
+}
+
+.chat-form button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+/* Loading Dots Animation */
+.loading-dots span {
+    animation: blink 1.4s infinite both;
+    font-size: 2rem;
+    line-height: 0;
+}
+.loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+@keyframes blink {
+    0%, 80%, 100% { opacity: 0; }
+    40% { opacity: 1; }
+}
+
+/* Vision Page Styles */
+.image-preview {
+  margin-top: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-color);
+}
+.image-preview img {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 2px;
+}
+
+input[type="file"] {
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
