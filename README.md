@@ -22,6 +22,8 @@ Backend: http://localhost:8001
 
 UI: Accessible via the main web interface.
 
+![Dashboard](images/dashboardgroundtruth_ai.png)  
+
 2. YieldWise (The Financial Advisor)
 An AI-powered financial planning tool. Users can input their farm details (land size, crop) to receive a customized financial plan, including information on eligible support schemes.
 
@@ -36,9 +38,7 @@ An AI-powered diagnostic tool that analyzes images of plant leaves to identify d
 
 Backend: http://localhost:8003
 
-UI: Accessible via the main web interface.
-
-![Dashboard](images/dashboardgroundtruth_ai.png)  
+UI: Accessible via the main web interface. 
 
 Technology Stack
 Backend: Python, FastAPI
