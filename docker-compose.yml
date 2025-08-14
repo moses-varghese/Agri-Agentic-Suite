@@ -304,6 +304,8 @@ services:
         - NEXT_PUBLIC_FIELDSCOUT_AI_URL=http://fieldscout_ai:8000/diagnose
     ports:
       - "3000:3000"
+    networks:
+      - agri_net
     depends_on:
       - groundtruth_ai
       - yieldwise
