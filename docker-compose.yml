@@ -261,7 +261,7 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11434/"]
       interval: 10s
-      timeout: 5s
+      timeout: 30s
       retries: 10
       start_period: 120s
 
