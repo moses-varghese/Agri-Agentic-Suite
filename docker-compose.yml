@@ -299,7 +299,7 @@ services:
     build:
       context: ./frontend
       args:
-        - NEXT_PUBLIC_GROUNDTRUTH_AI_URL=http://groundtruth_ai:8000/query
+        - NEXT_PUBLIC_GROUNDTRUTH_AI_URL=http://groundtruth_ai:8000/generate-truth
         - NEXT_PUBLIC_YIELDWISE_URL=http://yieldwise:8000/generate-plan
         - NEXT_PUBLIC_FIELDSCOUT_AI_URL=http://fieldscout_ai:8000/diagnose
     ports:

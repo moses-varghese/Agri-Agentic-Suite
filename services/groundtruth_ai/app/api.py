@@ -34,7 +34,7 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
 
-@router.post("/groundtruth", response_model=QueryResponse, tags=["RAG Query"])
+@router.post("/generate-truth", response_model=QueryResponse, tags=["RAG Query"])
 async def handle_query(request: QueryRequest):
     """
     Endpoint to handle an incoming query. Replaces the /sms endpoint.
