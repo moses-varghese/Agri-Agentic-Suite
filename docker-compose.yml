@@ -271,7 +271,7 @@ services:
     volumes: [./local_data:/app/local_data]
     env_file: [./.env]
     ports: ["8001:8000"]
-    depends_on: { db: { condition: service_healthy } }
+    depends_on: { db: { condition: service_healthy }, ollama: { condition: service_healthy } }
     networks: [agri_net]
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
@@ -281,7 +281,7 @@ services:
     volumes: [./local_data:/app/local_data]
     env_file: [./.env]
     ports: ["8002:8000"]
-    depends_on: { db: { condition: service_healthy } }
+    depends_on: { db: { condition: service_healthy }, ollama: { condition: service_healthy } }
     networks: [agri_net]
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
@@ -316,5 +316,5 @@ networks:
 
 # We define the named volume here at the top level.
 volumes:
-  db_data: # <-- CHANGE 2
+  db_data:
   ollama_data:
