@@ -4,3 +4,4 @@ pydantic
 litellm
 pydantic-settings
 python-multipart
+Pillow

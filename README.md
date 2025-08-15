@@ -38,7 +38,9 @@ An AI-powered diagnostic tool that analyzes images of plant leaves to identify d
 
 Backend: http://localhost:8003
 
-UI: Accessible via the main web interface. 
+UI: Accessible via the main web interface.
+
+![Dashboard](images/dashboardgroundtruth_ai.png)  
 
 Technology Stack
 Backend: Python, FastAPI
