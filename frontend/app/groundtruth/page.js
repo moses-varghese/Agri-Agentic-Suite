@@ -50,7 +50,7 @@ export default function QueryPage() {
   return (
     <main className="container">
        <header>
-        <h1>🗣️ Groundtruth AI</h1>
+        <h1>🗣️ GroundTruth AI</h1>
         <p>Your General-Purpose Agricultural AI Assistant</p>
         <nav className="navigation">
             <Link href="/">Switch to YieldWise</Link> | <Link href="/vision">FieldScout AI</Link>

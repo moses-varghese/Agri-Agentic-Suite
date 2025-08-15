@@ -48,7 +48,7 @@ export default function HomePage() {
         <h1>🌾 YieldWise</h1>
         <p>Your AI-Powered Agricultural Financial Advisor</p>
         <nav className="navigation">
-            <Link href="/groundtruth">Switch to Groundtruth AI</Link> | <Link href="/vision">FieldScout AI</Link>
+            <Link href="/groundtruth">Switch to GroundTruth AI</Link> | <Link href="/vision">FieldScout AI</Link>
         </nav>
       </header>
 

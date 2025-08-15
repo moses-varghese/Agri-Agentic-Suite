@@ -233,14 +233,18 @@ services:
     image: postgres:15-alpine
     container_name: agri_db
     # We now use a named volume called 'db_data' instead of a host path.
-    volumes: [db_data:/var/lib/postgresql/data] # <-- CHANGE 1
-    env_file: ./.env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    ports: ["5432:5432"]
-    networks: [agri_net]
+    ports:
+      - "5432:5432"
+    networks:
+      - agri_net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -253,45 +257,75 @@ services:
     volumes:
       - ollama_data:/root/.ollama
       - ./scripts/init-ollama.sh:/init-ollama.sh
-    ports: ["11434:11434"]
-    networks: [agri_net]
+    ports:
+      - "11434:11434"
+    networks:
+      - agri_net
     # network_mode: host # <-- This is the main fix
     entrypoint: /init-ollama.sh # <-- Use entrypoint instead of command
     command: ["${LOCAL_LLM_MODEL}", "${VISION_MODEL}"]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
+      test: ["CMD-SHELL", "ollama list | grep -q '${LOCAL_LLM_MODEL}' && ollama list | grep -q '${VISION_MODEL}'"]
+      # test: ["CMD", "curl", "-f", "http://localhost:11434/"]
       interval: 10s
       timeout: 30s
       retries: 10
-      start_period: 540s
+      start_period: 560s
 
   groundtruth_ai:
     container_name: groundtruth_ai_service
-    build: { context: ., dockerfile: ./services/groundtruth_ai/Dockerfile }
-    volumes: [./local_data:/app/local_data]
-    env_file: [./.env]
-    ports: ["8001:8000"]
-    depends_on: { db: { condition: service_healthy }, ollama: { condition: service_healthy } }
-    networks: [agri_net]
+    build:
+      context: .
+      dockerfile: ./services/groundtruth_ai/Dockerfile
+    volumes:
+      - ./local_data:/app/local_data
+    env_file:
+      - ./.env
+    ports:
+      - "8001:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    networks:
+      - agri_net
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
   yieldwise:
     container_name: yieldwise_service
-    build: { context: ., dockerfile: ./services/yieldwise/Dockerfile }
-    volumes: [./local_data:/app/local_data]
-    env_file: [./.env]
-    ports: ["8002:8000"]
-    depends_on: { db: { condition: service_healthy }, ollama: { condition: service_healthy } }
-    networks: [agri_net]
+    build:
+      context: .
+      dockerfile: ./services/yieldwise/Dockerfile
+    volumes:
+      - ./local_data:/app/local_data
+    env_file:
+      - ./.env
+    ports:
+      - "8002:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    networks:
+      - agri_net
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
 
   fieldscout_ai:
     container_name: fieldscout_ai_service
-    build: { context: ., dockerfile: ./services/fieldscout_ai/Dockerfile }
-    env_file: [./.env]
-    ports: ["8003:8000"]
-    depends_on: { db: { condition: service_healthy } }
-    networks: [agri_net]
+    build:
+      context: .
+      dockerfile: ./services/fieldscout_ai/Dockerfile
+    env_file:
+      - ./.env
+    ports:
+      - "8003:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - agri_net
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
   
   frontend:

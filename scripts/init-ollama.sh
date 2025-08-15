@@ -1,12 +1,6 @@
 #!/bin/sh
 # This script robustly pulls models first, then starts the main server.
 
-# 1. Check for curl and install it if it's missing (for Alpine-based images)
-if ! command -v curl > /dev/null; then
-  echo "curl not found, installing..."
-  apk update && apk add curl
-fi
-
 # 1. Store the model names from the command arguments
 MODELS_TO_PULL="$@"
 
@@ -14,13 +8,14 @@ MODELS_TO_PULL="$@"
 /bin/ollama serve &
 pid=$!
 echo "Ollama server started temporarily in background (PID: $pid) for model pulling."
-sleep 5 # Give the server a moment to start up
+sleep 10 # Give the server a moment to start up
 
 # 3. Loop through and pull all required models
 for model in $MODELS_TO_PULL; do
   echo "Checking for model: $model"
+  if ollama list | grep -q "$model"; then
   # Use the API to check for the model, it's more reliable
-  if curl -s --fail http://localhost:11434/api/tags | grep -q "$model"; then
+  # if curl -s --fail http://localhost:11434/api/tags | grep -q "$model"; then
     echo "✅ Model '$model' already exists."
   else
     echo "⏳ Pulling model '$model'..."

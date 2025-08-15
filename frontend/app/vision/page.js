@@ -57,7 +57,7 @@ export default function VisionPage() {
         <h1>🌿 FieldScout AI</h1>
         <p>Your AI-Powered Crop Disease Diagnostic Tool</p>
         <nav className="navigation">
-            <Link href="/">YieldWise</Link> | <Link href="/groundtruth">Groundtruth AI</Link>
+            <Link href="/">YieldWise</Link> | <Link href="/groundtruth">GroundTruth AI</Link>
         </nav>
       </header>
 
