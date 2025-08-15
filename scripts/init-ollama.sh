@@ -1,6 +1,12 @@
 #!/bin/sh
 # This script robustly pulls models first, then starts the main server.
 
+# 1. Check for curl and install it if it's missing (for Alpine-based images)
+if ! command -v curl > /dev/null; then
+  echo "curl not found, installing..."
+  apk update && apk add curl
+fi
+
 # 1. Store the model names from the command arguments
 MODELS_TO_PULL="$@"
 
