@@ -1,3 +1,9 @@
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Issues](https://img.shields.io/github/issues/moses-varghese/Agri-Agentic-Suite)
+![Pull Requests](https://img.shields.io/github/issues-pr/moses-varghese/Agri-Agentic-Suite)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/moses-varghese/Agri-Agentic-Suite)
+![GitHub last commit](https://img.shields.io/github/last-commit/moses-varghese/Agri-Agentic-Suite)
+
 ## Agri-Agentic-Suite: The Agentic AI Suite for Agriculture  
 Agri-Agentic-Suite is an open-source suite of three distinct, containerized AI prototypes designed to provide critical decision support for the agricultural sector. This project explores different agentic AI solutions to address real-world challenges faced by farmers, from accessing information to financial planning and crop health management.
 
@@ -72,49 +78,73 @@ A stable internet connection (for the initial download of the AI models).
 Installation & Launch
 Clone the repository:
 
-Bash
+```
 
 git clone <your-repository-url>
 cd <repository-name>
+
+```
+
 Make the startup script executable (for macOS/Linux):
 
-Bash
+```
 
 chmod +x scripts/init-ollama.sh
+
+```
+
 Launch the entire application stack:
 
-Bash
+```
 
 docker-compose up --build
+
+```
+
 The first time you run this command, it will take several minutes to download the base images and the AI models (phi-3:mini and llava). This only happens once.
 
 Access the application:
 Once all services are running, open your web browser and go to:
+
+```
 http://localhost:3000
+
+```
 
 Testing the Services
 You can interact with the prototypes through the web interface or test the backend APIs directly using curl.
 
 Test GroundTruth AI (Query Service)
-Bash
+```
 
 curl -X POST -H "Content-Type: application/json" \
 -d '{"query": "what is a good method to improve soil health?"}' \
-http://localhost:8001/query
+http://localhost:8001/query  
+
+```
+
 Test YieldWise (Financial Agent)
-Bash
+```
 
 curl -X POST -H "Content-Type: application/json" \
 -d '{"land_size": 4, "crop": "Tomato"}' \
 http://localhost:8002/generate-plan
+
+```
+
 Test FieldScout AI (Vision Agent)
 First, create a dummy file:
 
-Bash
+```
 
 echo "this is a test image" > dummy.jpg
+
+```
+
 Then, send the file to the diagnosis endpoint:
 
-Bash
+```
 
 curl -X POST -F 'image=@dummy.jpg' http://localhost:8003/diagnose
+
+```
