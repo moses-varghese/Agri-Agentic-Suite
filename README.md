@@ -40,7 +40,7 @@ Backend: http://localhost:8003
 
 UI: Accessible via the main web interface.
 
-![Dashboard](images/dashboardgroundtruth_ai.png)  
+![Dashboard](images/dashboardfieldscout_ai.png)  
 
 Technology Stack
 Backend: Python, FastAPI
