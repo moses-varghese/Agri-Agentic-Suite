@@ -9,7 +9,7 @@ Agri-Agentic-Suite is an open-source suite of three distinct, containerized AI p
 
 The entire ecosystem is designed to run locally, powered by open-source Large Language and Vision Models, and is orchestrated with Docker for easy, one-command deployment
 
-Key Features
+Key Features  
 Three Prototypes, One Ecosystem: A suite of specialized tools working together in a unified web interface
 
 Local & Open-Source: No external API keys or paid services are required. All AI models run locally via Ollama
@@ -23,7 +23,7 @@ Multi-Agent Ready: The architecture is designed to be extensible, allowing for t
 Innovative Finance & Vision Applications: Includes dedicated prototypes for AI-driven financial planning and image-based crop disease diagnosis
 
 The Prototypes
-1. GroundTruth AI (The Query Agent)
+1. GroundTruth AI (The Query Agent):  
 A general-purpose AI assistant that answers agricultural questions using a Retrieval-Augmented Generation (RAG) approach. It uses a local knowledge base to provide factual, grounded answers
 
 Backend: http://localhost:8001
@@ -32,7 +32,7 @@ UI: Accessible via the main web interface
 
 ![Dashboard](images/dashboardgroundtruth_ai.png)  
 
-2. YieldWise (The Financial Advisor)
+2. YieldWise (The Financial Advisor):  
 An AI-powered financial planning tool. Users can input their farm details (land size, crop) to receive a customized financial plan, including information on eligible support schemes
 
 Backend: http://localhost:8002
@@ -41,7 +41,7 @@ UI: The main landing page of the web application
 
 ![Dashboard](images/dashboardyieldwise.png)  
 
-3. FieldScout AI (The Vision Agent)
+3. FieldScout AI (The Vision Agent):  
 An AI-powered diagnostic tool that analyzes images of plant leaves to identify diseases or pests. It uses the LLaVA (Large Language and Vision Assistant) multimodal model
 
 Backend: http://localhost:8003
@@ -50,7 +50,7 @@ UI: Accessible via the main web interface
 
 ![Dashboard](images/dashboardfieldscout_ai.png)  
 
-Technology Stack
+Technology Stack  
 Backend: Python, FastAPI
 
 Frontend: JavaScript, React, Next.js
@@ -69,7 +69,7 @@ Language: phi-3:mini
 
 Vision: llava
 
-Getting Started
+Getting Started  
 This project is fully containerized and can be run with a single command, provided you have Docker and Docker Compose installed on your system
 
 Prerequisites
@@ -119,8 +119,8 @@ http://localhost:3000
 
 ```
 
-Testing the Services
-Method 1: Interact with the prototypes through the web interface  
+Testing the Services  
+Method 1: Interact with the prototypes through the web interface   
 Once all services are running, open your web browser and go to:
 http://localhost:3000
 
@@ -169,12 +169,14 @@ Or for easy testing, I have added a file in the local data folder called leaf.jp
 Then, send the file to the diagnosis endpoint:
 
       If using the dummy.jpg
+
 ```
 
 curl -X POST -F 'image=@dummy.jpg' http://localhost:8003/diagnose
 
 ```
       If using the image from local data:
+      
 ```
 
 curl -X POST -F 'image=@local_data/leaf.jpg' http://localhost:8003/diagnose
