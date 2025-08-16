@@ -174,14 +174,18 @@ Or for easy testing, I have added a file in the local data folder called leaf.jp
 
 Then, send the file to the diagnosis endpoint:
 
+
       If using the dummy.jpg
+
 
 ```
 
 curl -X POST -F 'image=@dummy.jpg' http://localhost:8003/diagnose
 
 ```
+
       If using the image from local data:
+
 
 ```
 
