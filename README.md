@@ -162,7 +162,7 @@ http://localhost:8002/generate-plan
 
 ```
 
-Test FieldScout AI (Vision Agent)
+Test FieldScout AI (Vision Agent)  
 First, create a dummy file:
 
 ```
@@ -172,10 +172,8 @@ echo "this is a test image" > dummy.jpg
 ```
 Or for easy testing, I have added a file in the local data folder called leaf.jpg to use
 
-Then, send the file to the diagnosis endpoint:
-
-
-      If using the dummy.jpg
+Then, send the file to the diagnosis endpoint:  
+If using the dummy.jpg
 
 
 ```
@@ -184,7 +182,7 @@ curl -X POST -F 'image=@dummy.jpg' http://localhost:8003/diagnose
 
 ```
 
-      If using the image from local data:
+If using the image from local data
 
 
 ```
