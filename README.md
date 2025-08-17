@@ -162,9 +162,9 @@ http://localhost:8001/docs/
 
 ```
 
-Click on voice-query dropdown and then click on 'Try it Out'
-Upload a audio file in mp3 format
-Click Execute
+Click on voice-query dropdown and then click on 'Try it Out'  
+Upload a audio file in mp3 format  
+Click Execute  
 A response file named response in mp3 would be ready to download  
 
 Test YieldWise (Financial Agent)
