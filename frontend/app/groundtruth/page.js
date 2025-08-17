@@ -2,13 +2,16 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import VoiceRecorder from '../components/VoiceRecorder';
 
-export default function QueryPage() {
+export default function GroundTruthPage() {
   const [messages, setMessages] = useState([
-    { sender: 'ai', text: 'Hello! How can I help you with your agricultural questions today?' }
+    { sender: 'ai', text: 'Hello! How can I help you with your agricultural questions today? Ask me a question with your voice or by typing' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [audioObject, setAudioObject] = useState(null); // 👈 Store the audio object
+  const [isPlaying, setIsPlaying] = useState(false); // 👈 Track playback state
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -16,6 +19,16 @@ export default function QueryPage() {
   };
 
   useEffect(scrollToBottom, [messages]);
+
+  // Stop any playing audio when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioObject) {
+        audioObject.pause();
+      }
+    };
+  }, [audioObject]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,6 +60,78 @@ export default function QueryPage() {
     }
   };
 
+
+
+
+
+  const handleVoiceSubmit = async (audioFile) => {
+    setIsLoading(true);
+    if (audioObject) audioObject.pause();
+
+    const formData = new FormData();
+    formData.append('audio_file', audioFile);
+
+    try {
+      setMessages(prev => [...prev, { sender: 'user', text: '🎤 (You sent a voice note)' }]);
+      
+      const response = await fetch(process.env.NEXT_PUBLIC_GROUNDTRUTH_AI_VOICE_URL, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        // If the server returns an error, try to parse it as JSON
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Network response was not ok');
+      }
+
+      // --- THIS IS THE FIX ---
+      // Check the response type before processing
+      const contentType = response.headers.get("content-type");
+
+      if (contentType && contentType.includes("audio/mpeg")) {
+        // Handle the successful audio response
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const newAudio = new Audio(audioUrl);
+        
+        newAudio.onplay = () => setIsPlaying(true);
+        newAudio.onended = () => setIsPlaying(false);
+        newAudio.play();
+        
+        setAudioObject(newAudio);
+        setMessages(prev => [...prev, { sender: 'ai', text: '🔊 (AI is responding...)' }]);
+      } else {
+        // Handle an unexpected (but successful) JSON response
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Received an unexpected response from the server.');
+      }
+
+    } catch (err) {
+      // Now, this will display the actual error message from the backend
+      const errorMessage = { sender: 'ai', text: `Sorry, an error occurred: ${err.message}` };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --- NEW: Playback Control Functions ---
+  const handleStop = () => {
+    if (audioObject) {
+      audioObject.pause();
+      audioObject.currentTime = 0; // Rewind to the beginning
+      setIsPlaying(false);
+    }
+  };
+
+  const handleReplay = () => {
+    if (audioObject) {
+      audioObject.currentTime = 0; // Rewind to the beginning
+      audioObject.play();
+    }
+  };
+
   return (
     <main className="container">
        <header>
@@ -71,6 +156,14 @@ export default function QueryPage() {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* --- NEW: Audio Control Buttons --- */}
+      {audioObject && (
+        <div className="audio-controls">
+          <button onClick={handleReplay} disabled={isPlaying}>Replay Last</button>
+          <button onClick={handleStop} disabled={!isPlaying}>Stop</button>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="chat-form">
         <input
           type="text"
@@ -80,6 +173,8 @@ export default function QueryPage() {
           disabled={isLoading}
         />
         <button type="submit" disabled={isLoading}>Send</button>
+        {/*VoiceRecorder component here */}
+        <VoiceRecorder onStop={handleVoiceSubmit} />
       </form>
     </main>
   );
