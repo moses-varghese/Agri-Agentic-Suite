@@ -1,0 +1,27 @@
+[
+  {
+    "id": "RBI_KCC_Guidelines",
+    "title": "Master Circular - Kisan Credit Card (KCC) Scheme",
+    "source_organization": "Reserve Bank of India (RBI)",
+    "description": "RBI detailing about the scheme that aims at providing adequate and timely credit support from the banking system under a single window with flexible and simplified procedure to the farmers for their cultivation and other needs",
+    "download_url": "https://www.rbi.org.in/commonman/Upload/English/Notification/PDFs/10MCKCC0407189D000371DE014EBB8EBAB1015C765689.pdf",
+    "publication_date": "2018-07-04",
+    "document_type": "pdf"
+  },
+  {
+    "id": "ICAR-Natural_Resource_Management-Tech-2023",
+    "title": "Natural Resource Management: Technologies Ready for Commercialization",
+    "source_organization": "Indian Council of Agricultural Research (ICAR)",
+    "description": "This document details various agricultural technologies in the field of Natural Resource Management that are ready for commercial use",
+    "download_url": "https://icar.org.in/sites/default/files/2023-02/NRM-2702.pdf",
+    "document_type": "pdf"
+  },
+  {
+  "id": "Soil_Organic_Carbon",
+  "title": "Soil Organic Carbon - the hidden potential",
+  "source_organization": "Food and Agriculture Organization of the United Nations",
+  "description": "This publication provides an overview to decision-makers and practitioners of the main scientific facts and information regarding the current knowledge and knowledge gaps on Soil Organic Carbon",
+  "download_url": "https://openknowledge.fao.org/server/api/core/bitstreams/b382a255-5bd5-4656-a8cd-e30fff1a8bfe/content",
+  "document_type": "pdf"
+ }
+]

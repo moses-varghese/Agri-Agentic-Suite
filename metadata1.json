@@ -1,0 +1,179 @@
+[
+  {
+    "id": "NABARD_AGRI_VALUE_CHAIN_FINANCE",
+    "title": "Financing Agricultural Value Chains (Monograph)",
+    "source_organization": "NABARD",
+    "description": "Monograph from a national seminar outlining principles and challenges of financing agricultural value chains in India.",
+    "download_url": "https://www.nabard.org/auth/writereaddata/tender/1409165859Monograph-Financing%20agricultural%20value%20chain.pdf"
+  },
+  {
+    "id": "APRACA_VALUE_CHAIN_CASES",
+    "title": "Value Chain Financing in Agriculture: Case Studies from India",
+    "source_organization": "APRACA / IFAD",
+    "description": "Case studies illustrating agricultural value chain finance mechanisms in India and other Asian countries.",
+    "download_url": "https://www.apraca.org/wp-content/uploads/2017/06/India2013-3a.pdf"
+  },
+  {
+    "id": "FAO_VALUE_CHAIN_FINANCE",
+    "title": "Agricultural Value Chain Finance (FAO Guide)",
+    "source_organization": "FAO",
+    "description": "Comprehensive FAO guide explaining value chain finance concepts, instruments, and business models globally.",
+    "download_url": "https://www.fao.org/4/i0846e/i0846e.pdf"
+  },
+  {
+    "id": "BANKERS_GUIDE_AVCF",
+    "title": "Agricultural Value Chain Finance – A Guide for Bankers",
+    "source_organization": "World Bank / mFW4A",
+    "description": "Practical guide for bankers, detailing entry points, financing instruments, and operational models for value chain financing.",
+    "download_url": "https://www.mfw4a.org/sites/default/files/resources/Bankers_Guide_to_AVCF.pdf",
+    "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+    }
+  },
+  {
+    "id": "MICROSAVE_INDIAN_VC_EXPERIENCE",
+    "title": "Indian Experience in Application of Agricultural Value Chain Finance",
+    "source_organization": "MicroSave / India Case Study",
+    "description": "Analysis of India's institutional framework, policies, and case studies related to value chain finance development.",
+    "download_url": "https://www.microsave.net/wp-content/uploads/2018/10/RP153_Indian_Experience_in_Application_of_Agricultural_Value_Chain_Finance.pdf"
+  },
+  {
+    "id": "CPI_SUSTAINABLE_AGRI_FINANCE_IN_INDIA",
+    "title": "Sustainable Finance Flows to India's Agriculture Sector (2020–22)",
+    "source_organization": "Climate Policy Initiative (CPI)",
+    "description": "Data-driven analysis of financial flows—public, private, domestic, and international—towards sustainable agriculture in India.",
+    "download_url": "https://www.climatepolicyinitiative.org/wp-content/uploads/2025/01/Sustainable-Agriculture-Finance-in-India.pdf"
+  },
+  {
+    "id": "AI_PLANT_DISEASE_REVIEW",
+    "title": "Detection and Management of Plant Disease Using Artificial Intelligence… A Review",
+    "source_organization": "Journal of Scientific Research andReports (Review article)",
+    "description": "Recent 2025 review on the use of AI and machine learning technologies in plant disease detection and management.",
+    "download_url": "https://journaljsrr.com/index.php/JSRR/article/view/2902/6408",
+    "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+    }
+  },
+  {
+    "id": "DL_PLANT_DISEASE_DETECTION",
+    "title": "Plant Disease Detection Using Deep Learning",
+    "source_organization": "International Journal of Intelligent Systems and Applications (IJISA) / MECS Press",
+    "description": "Open-access paper on early detection and precise diagnosis of plant diseases using deep learning (EfficientNetV2S, transfer learning) across multiple crop species",
+    "download_url": "https://www.mecs-press.org/ijisa/ijisa-v15-n6/IJISA-V15-N6-4.pdf"
+  },
+  {
+    "id": "AI_DISEASE_PREDICTION_SYSTEM_SSRN",
+    "title": "Development of a Recommendation System for Plant Disease Recognition",
+    "source_organization": "SSRN (Preprint)",
+    "description": "Research proposing an AI-based recommender system that uses machine learning to detect plant diseases from images.",
+    "download_url": "https://download.ssrn.com/23/06/20/ssrn_id4485274_code4055546.pdf?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjECwaCXVzLWVhc3QtMSJHMEUCIHIJUJIcSAGAMBS8CNAvzFk9yY5mUzlwATNgAhmARQcoAiEAoNDVeul4ec2Rv6VcOwSXWB8nmPxHH3mV7huF%2BHhSLrYqvgUIdRAEGgwzMDg0NzUzMDEyNTciDGvGyvgJ%2FFpaCesVaiqbBU0cDyMfj11Ay8WnFkLlybW4xD6JvgvfKLfiB9Xyor%2Fe3gbYXpTAqPN2Q6L4KpZ7x7fDi1nGcTD41cBeSYJn3JoO5FaEhluWBj0iMjEyB%2BezXCfflXdxDqaJ6zXcj7EbaC6LeXpUUZf5aqCtGm62%2FNntx4mioDiVJWwMYbL4INbvtp4qCPGM0RN5WCRvDcU1mbeFOd1UpzUZ2bXf6QxiHZM6ewFmH%2BLo3NDK0i6O0n9YZhDGEWqogqW%2B4W8gx11%2F%2FCreIyU5Xck4OWoTyTUd51Ae9RLXCtgZM%2BdMeKBd3th0zkV2O%2B8RyDO2BHBhRCfKWQ%2FJvM%2BvHZxiIk3RzBWA4nwWiJhXGTzCj3iquEX0SquWQD8%2BzmZAeQSYEaiisc6wvIrWzknHcOdUP7fC2GI37ox8TcMJ5RS1Ogvj168aKiVcAy%2B74fG%2F6Q14FCCYK8y2iL4c9cnWCafZz8%2FOTMzGHKBnPdgGSnhV0heiTt%2FARQMKozC7M3HO8COzTnK4KmsPeCCC97f2fAHhMf5NtkogGSIBkEZzm9lNPi9aeCyAjWEl5F6o4rLaMgph%2FnbhY49fUVaTBK10UH4PM0S1OJaYaVysm2Q1QOMaUC%2FdVbE2u8P5MMZDiW2URP79Z%2B5WOZT4U%2BRMvclZqBkVi5l60%2FEqBC1uvfIHPjcBQNGQAI4k1Zw12jywBfPJqVV41Xp1befnZB4N55dUYUCdJgF7RunlXwazuk9mJjo%2FCq8o%2FVPdUmD9uTudnyIV9L5bAQjcC3mR7XOsDgySpySX59b2OdYy1lYu85NF2IaCYz5n9LC7V35lqTnFD5HG%2BU44n%2B9LIWTwxSwgaEm4i5u6k7UlFc4oqpbN8YtcZdo4QPbTAeTvzsUWu5oViDS3TsJHG30w5%2BCBxQY6sQFeCwfQpYZP%2FkGpbkH9GnSNoB0DDkT8MgGRm1wm2ZuduJYTEfhM7AbasEi0dxcv5NOkVS8fVMDJ7It%2FazahG8Gr4RQm2dYvxTUtTjKM6z8bBLcPDyyB4GghZ91hYSXrSDg%2BE2JwsUvGE9tqY9njes%2FSOwN93KsrHIrt3uTFrhnS3LCLtYGzbndiBIzMxDLc2rAde8bT%2BGCzkdwlDKUw%2Bvx%2BiULn%2BpXD2gPhzyK9C6EgIo8%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20250816T123721Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAUPUUPRWEQSOYKUZA%2F20250816%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=7adea03e7021b1a39594f0c58ebf0ae68c779d709b1df68c613f42911c56a491&abstractId=4485274",
+    "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
+    }
+  },
+  {
+    "id": "AI_IMAGE_DISEASE_PREDICTION",
+    "title": "Disease Prediction Models in Plant Pathology: Leveraging AI and ML",
+    "source_organization": "Biochem Journal",
+    "description": "2024 paper on image-based diagnostics and early warning systems empowering farmers with real-time disease protection tools.",
+    "download_url": "https://www.biochemjournal.com/archives/2024/vol8issue12/PartE/8-11-111-396.pdf"
+  },
+  {
+    "id": "FRONTIERS_AI_VEGETABLE_DISEASE_CLASSIFICATION",
+    "title": "AI-Based Vegetable Disease Classification (Frontiers Journal)",
+    "source_organization": "Frontiers in Plant Science",
+    "description": "2024 article reviewing AI-based classification of vegetable leaf diseases, frameworks, challenges, and unresolved issues.",
+    "download_url": "https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2024.1356260/pdf"
+  },
+  {
+    "id": "AGRI_CREDIT_UTILIZATION_TRIPURA",
+    "title": "Agricultural Credit Utilization and Repayment by Farm Households in Tripura",
+    "source_organization": "ICAR – Indian Journal of Extension Education",
+    "description": "Empirical study of how farm households in West Tripura used and repaid agricultural loans, with recommendations for credit utilization improvement.",
+    "download_url": "https://epubs.icar.org.in/index.php/IJEE/article/download/133016/49632/464957"
+  },
+  {
+    "id": "AGRI_CREDIT_PRODUCTIVITY_IMPACT",
+    "title": "Impact of Agricultural Credit on Agricultural Productivity in India",
+    "source_organization": "ICAR – Indian Journal of Agricultural Sciences",
+    "description": "An empirical analysis examining the relationship between institutional credit and agricultural production levels in India.",
+    "download_url": "https://epubs.icar.org.in/index.php/IJAgS/article/download/99033/43907"
+  },
+  {
+    "id": "FARMERS_FINANCIAL_INCLUSION_KARNATAKA",
+    "title": "Farmers' Financial Inclusion in Aspirational Districts of Karnataka",
+    "source_organization": "ICAR – Indian Journal of Agricultural Sciences",
+    "description": "Assessment of the extent and determinants of financial inclusion among farmers in Karnataka’s aspirational districts.",
+    "download_url": "https://epubs.icar.org.in/index.php/IJAgS/article/download/122838/49466/352193"
+  },
+  {
+    "id": "HORTICULTURE_FINANCE_INDIA",
+    "title": "Status of Credit Facility for Horticultural Sector in India",
+    "source_organization": "ICAR – Indian Journal of Agricultural Sciences",
+    "description": "Empirical study on credit systems in horticulture, analyzing investment patterns and highlighting gaps in financial support.",
+    "download_url": "https://epubs.icar.org.in/index.php/IJAgS/article/download/122210/46519/332721"
+  },
+  {
+    "id": "DIGITALIZATION_OF_AGRICULTURE",
+    "title": "Digitalization of Agriculture — The Future of Indian Agriculture",
+    "source_organization": "ICAR – Journal of Agricultural Extension Management",
+    "description": "Review of digital and e-agriculture initiatives in India and their potential to enhance access to finance, markets, and information.",
+    "download_url": "https://epubs.icar.org.in/index.php/JAEM/issue/view/4281/1333"
+  },
+  {
+    "id": "PLANT_DISEASE_MANAGEMENT_RESOURCE_POOR",
+    "title": "Working with Resource-Poor Farmers to Manage Plant Diseases",
+    "source_organization": "American Phytopathological Society",
+    "description": "Practical case studies of rice blast and potato late blight management using farmer field schools and participatory methods.",
+    "download_url": "https://www.apsnet.org/edcenter/apsnetfeatures/Documents/2001/ResourcePoorFarmers.pdf"
+  },
+  {
+    "id": "ICAR_SOIL_HEALTH_2020",
+    "title": "Soil Health Management",
+    "source_organization": "Indian Council of Agricultural Research (ICAR)",
+    "description": "ALTERNATIVE: ‘Fundamentals of Soil Science’ and related ICAR e-course materials covering soil chemistry, fertility, and nutrient management.",
+    "download_url": "https://agrimoon.com/wp-content/uploads/Fundamentals-of-Soil-Science-with-Practicals.pdf"
+  },
+  {
+    "id": "ICAR_SOIL_HEALTH_CASE_STUDY",
+    "title": "Soil-health Management in Nutrient-Deficient Soils: A Case Study",
+    "source_organization": "ICAR / Indian Journal of Agricultural Sciences",
+    "description": "Case study PDF on soil-health management in nutrient-deficient soils.",
+    "download_url": "https://epubs.icar.org.in/index.php/IJAgS/article/download/118584/45742/336836"
+  },
+  {
+    "id": "ICAR_SHC_IMPACT_ANALYSIS",
+    "title": "Impact of Soil Health Card Scheme on Soil Fertility and Crop Productivity",
+    "source_organization": "ICAR / Indian Journal of Extension Education",
+    "description": "PDF analysing impact of Soil Health Card scheme on soil fertility and crop yields.",
+    "download_url": "https://epubs.icar.org.in/index.php/IJEE/article/download/131881/48902/465606"
+  },
+  {
+    "id": "NABARD_AGRI_FINANCE_2024",
+    "title": "Capital Formation in Indian Agriculture (Occasional Paper)",
+    "source_organization": "NABARD",
+    "description": "An earlier version of NABARD’s Occasional Paper on capital formation, similar in scope to the 2024 paper.",
+    "download_url": "https://www.nabard.org/auth/writereaddata/file/OC%208.pdf"
+  },
+  {
+    "id": "NABARD_KCC_MASTER_CIRCULAR_2017",
+    "title": "Master Circular on Kisan Credit Card (KCC) Scheme (up to June 2017)",
+    "source_organization": "NABARD / RBI",
+    "description": "Consolidated circular on KCC scheme guidelines issued up to June 2017.",
+    "download_url": "https://www.rbi.org.in/commonman/Upload/English/Notification/PDFs/04MCKCC03072017.pdf"
+  },
+  {
+    "id": "GOI_PM_KISAN_GUIDE_2022",
+    "title": "Operational Guidelines for PM-KISAN Scheme",
+    "source_organization": "Ministry of Agriculture & Farmers Welfare, Government of India",
+    "description": "Latest official operational guidelines for the PM-KISAN income support scheme.",
+    "download_url": "https://agriwelfare.gov.in/en/FarmersWelDiv"
+  },
+  {
+    "id": "GOI_PM_KISAN_GUIDE_2022-1",
+    "title": "Operational Guidelines for PM-KISAN Scheme",
+    "source_organization": "Ministry of Agriculture & Farmers Welfare, Government of India",
+    "description": "Official operational guidelines for the PM-KISAN scheme, accessible via government portals.",
+    "download_url": "https://fw.pmkisan.gov.in/Documents/Revised%20Operational%20Guidelines%20-%20PM-Kisan%20Scheme.pdf"
+  }
+]

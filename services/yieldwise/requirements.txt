@@ -4,3 +4,12 @@ pydantic
 pydantic-settings
 litellm
 #pandas
+chromadb
+sentence-transformers
+langchain
+pypdf
+numpy
+pdf2image
+pytesseract
+Pillow
+ddgs

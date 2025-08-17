@@ -5,4 +5,19 @@ pydantic-settings
 pandas
 litellm
 #twilio
-#python-multipart
+python-multipart
+chromadb
+sentence-transformers
+langchain
+langchain-community
+pypdf
+ddgs
+requests
+cloudscraper
+certifi
+pytesseract
+Pillow
+pdf2image
+gTTS # Text-to-Speech
+vosk # offline Speech-to-Text
+pydub # audio file conversion

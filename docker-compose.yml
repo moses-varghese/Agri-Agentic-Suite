@@ -1,231 +1,3 @@
-# version: '3.8'
-
-# services:
-#   # -- PostgreSQL Database Service --
-#   db:
-#     image: postgres:15-alpine
-#     container_name: agri_db
-#     volumes:
-#       - ./data/postgres_data:/var/lib/postgresql/data
-#     env_file:
-#       - ./.env
-#     environment:
-#       - POSTGRES_USER=${POSTGRES_USER}
-#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-#       - POSTGRES_DB=${POSTGRES_DB}
-#     ports:
-#       - "5432:5432" # Expose db port to host for debugging
-#     networks:
-#       - agri_net
-#     healthcheck:
-#       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-#       interval: 5s
-#       timeout: 5s
-#       retries: 5
-  
-#   # -- NEW: Local LLM Service --
-#   ollama:
-#     image: ollama/ollama
-#     container_name: ollama
-#     volumes:
-#       - ollama_data:/root/.ollama
-#       - ./scripts/init-ollama.sh:/init-ollama.sh # Mount our script
-#     ports:
-#       - "11434:11434"
-#     networks:
-#       - agri_net
-#     # Override the default command to run our script
-#     # This passes the model name from our .env file directly to the script
-#     command: ["/init-ollama.sh", "${LOCAL_LLM_MODEL}"]
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:11434/"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 10
-#       start_period: 120s # Give it 60s to start up before first check
-
-#   # -- Prototype 1: GroundTruth AI Service --
-#   query_service:
-#     container_name: query_service
-#     build:
-#       context: .
-#       dockerfile: ./services/query_service/Dockerfile
-#       # context: ./services/groundtruth_ai
-#     volumes:
-#       - ./local_data:/app/local_data # Mount local data
-#     env_file:
-#       - ./.env
-#     ports:
-#       - "8001:8000"
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#       ollama:
-#         condition: service_healthy
-#     networks:
-#       - agri_net
-#     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-#     # command: ["tail", "-f", "/dev/null"]
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#       start_period: 60s
-    
-
-#   # -- Prototype 2: YieldWise Service --
-#   yieldwise:
-#     container_name: yieldwise_service
-#     build:
-#       context: .
-#       dockerfile: ./services/yieldwise/Dockerfile
-#       # context: ./services/yieldwise/Dockerfile
-#     volumes:
-#       - ./local_data:/app/local_data # Mount local data
-#     env_file:
-#       - ./.env
-#     ports:
-#       - "8002:8000"
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#       ollama:
-#         condition: service_healthy
-#     networks:
-#       - agri_net
-#     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 
-#     # command: ["tail", "-f", "/dev/null"] to run a particular container forever
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#       start_period: 60s
-
-#   # -- Prototype 3: FieldScout AI Service --
-#   fieldscout_ai:
-#     container_name: fieldscout_ai_service
-#     build:
-#       context: .
-#       dockerfile: ./services/fieldscout_ai/Dockerfile
-#       # context: ./services/fieldscout_ai
-#     env_file:
-#       - ./.env
-#     ports:
-#       - "8003:8000"
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#     networks:
-#       - agri_net
-#     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#       start_period: 60s
-
-# networks:
-#   agri_net:
-#     driver: bridge
-
-# volumes:
-#   ollama_data: # Define the volume for Ollama
-
-
-
-# version: '3.8'
-
-# services:
-#   db:
-#     image: postgres:15-alpine
-#     container_name: agri_db
-#     volumes: [./data/postgres_data:/var/lib/postgresql/data]
-#     env_file: [./.env]
-#     environment:
-#       - POSTGRES_USER=${POSTGRES_USER}
-#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-#       - POSTGRES_DB=${POSTGRES_DB}
-#     ports: ["5432:5432"]
-#     networks: [agri_net]
-#     healthcheck:
-#       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-
-#   ollama:
-#     image: ollama/ollama
-#     container_name: ollama
-#     volumes:
-#       - ollama_data:/root/.ollama
-#       - ./scripts/init-ollama.sh:/init-ollama.sh
-#     ports: ["11434:11434"]
-#     networks: [agri_net]
-#     command: ["/init-ollama.sh", "${LOCAL_LLM_MODEL}"]
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:11434/"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 10
-#       start_period: 120s
-
-#   query_service:
-#     container_name: query_service
-#     build: { context: ., dockerfile: ./services/query_service/Dockerfile }
-#     volumes: [./local_data:/app/local_data]
-#     env_file: [./.env]
-#     ports: ["8001:8000"]
-#     depends_on: { db: { condition: service_healthy } }
-#     networks: [agri_net]
-#     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#       start_period: 60s
-
-#   yieldwise:
-#     container_name: yieldwise_service
-#     build: { context: ., dockerfile: ./services/yieldwise/Dockerfile }
-#     volumes: [./local_data:/app/local_data]
-#     env_file: [./.env]
-#     ports: ["8002:8000"]
-#     depends_on: { db: { condition: service_healthy } }
-#     networks: [agri_net]
-#     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#       start_period: 60s
-
-#   fieldscout_ai:
-#     container_name: fieldscout_ai_service
-#     build: { context: ., dockerfile: ./services/fieldscout_ai/Dockerfile }
-#     env_file: [./.env]
-#     ports: ["8003:8000"]
-#     depends_on: { db: { condition: service_healthy } }
-#     networks: [agri_net]
-#     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:8000/"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#       start_period: 60s
-
-# networks:
-#   agri_net: { driver: bridge }
-
-# volumes:
-#   ollama_data:
-
-
 version: '3.8'
 
 services:
@@ -261,7 +33,6 @@ services:
       - "11434:11434"
     networks:
       - agri_net
-    # network_mode: host # <-- This is the main fix
     entrypoint: /init-ollama.sh # <-- Use entrypoint instead of command
     command: ["${LOCAL_LLM_MODEL}", "${VISION_MODEL}"]
     healthcheck:
@@ -279,6 +50,13 @@ services:
       dockerfile: ./services/groundtruth_ai/Dockerfile
     volumes:
       - ./local_data:/app/local_data
+      - chroma_db:/chroma_db 
+      # this is a named volume which should be on and not the bind volume but bind volume can be on to just inspect. 
+      # two same volume of bind and named cannot be activated. if both on, then the last one under volumes mentioned would be active. named vol managed 
+      # by docker and cannot be accessed by user, bind volume managed and accessed by user 
+      - ./knowledge_documents:/app/knowledge_documents
+      # - ./chroma_db_volume:/chroma_db 
+      # this is for inspecting vectordb by user to check update progress which is a bind volume
     env_file:
       - ./.env
     ports:
@@ -299,6 +77,8 @@ services:
       dockerfile: ./services/yieldwise/Dockerfile
     volumes:
       - ./local_data:/app/local_data
+      - ./knowledge_documents:/app/knowledge_documents
+      - chroma_db:/chroma_db 
     env_file:
       - ./.env
     ports:
@@ -327,13 +107,14 @@ services:
     networks:
       - agri_net
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
-  
+
   frontend:
     container_name: frontend_service
     build:
       context: ./frontend
       args:
         - NEXT_PUBLIC_GROUNDTRUTH_AI_URL=http://localhost:8001/generate-truth
+        - NEXT_PUBLIC_GROUNDTRUTH_AI_VOICE_URL=http://localhost:8001/voice-query
         - NEXT_PUBLIC_YIELDWISE_URL=http://localhost:8002/generate-plan
         - NEXT_PUBLIC_FIELDSCOUT_AI_URL=http://localhost:8003/diagnose
     ports:
@@ -346,9 +127,11 @@ services:
       - fieldscout_ai
 
 networks:
-  agri_net: { driver: bridge }
+  agri_net: 
+    driver: bridge
 
 # We define the named volume here at the top level.
 volumes:
   db_data:
   ollama_data:
+  chroma_db: {}

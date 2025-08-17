@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     # Local AI Model Settings
     LOCAL_LLM_MODEL: str
     OLLAMA_API_BASE_URL: str
+    EMBEDDING_MODEL_NAME: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8', extra='ignore')
 

@@ -3,3 +3,30 @@ Warning: This will clean up all unused Docker data on your system, not just for 
 
 Bash
 docker system prune -af
+
+
+rm -f knowledge_documents/*.pdf
+
+docker volume rm agri-agents_chroma_db
+
+
+Check Logs: Run docker-compose logs -f groundtruth_ai to see the "real-time" progress of the background document processing.
+
+Use the App: While the documents are processing, you can already use the frontend. It will respond with "The knowledge base is still being built..." until the process is complete.
+
+Inspect the DB: At any time, open a new terminal, activate your virtual environment (source venv/bin/activate), install pandas (pip install pandas tabulate), and run python inspect_db.py to see a neatly formatted table of what's in your vector database.
+
+
+Certain files in knowledge_documents cannot be downloaded directly. 
+For example, https://pmkisan.gov.in/Documents/ADDITIONAL-FAQ-IN-RESPECTIVE-OF-THE-PM2.pdf for this pdf if we directly do requests() we will get SSL certifcation error
+To by pass that we need to get the SSL certifcation for that site. Steps are:
+Go to 👉 https://pmkisan.gov.in
+Click the lock icon (🔒) in the address bar.
+Choose “Connection is secure” → Certificate is valid (or View Certificate).
+🔹 Step 2: Export the certificate
+A window will open showing the certificate details.
+Go to the Details tab.
+Click Copy to File… (in Chrome/Edge it’s “Export”).
+In the wizard:
+Choose base64 ASCII encoded certificate chain.
+Save it as govt.pem (Windows might default to .cer, just rename extension to .pem).
