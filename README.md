@@ -91,13 +91,53 @@ cd <repository-name>
 
 ```
 
+Create an .env file at the root directory and load the following
+
+```
+
+ENVIRONMENT=development
+SECRET_KEY=
+
+POSTGRES_SERVER=db
+POSTGRES_PORT=5432
+POSTGRES_USER=agri_user
+POSTGRES_PASSWORD=
+POSTGRES_DB=agri_db
+
+LOCAL_LLM_MODEL=phi3:mini
+OLLAMA_API_BASE_URL=http://ollama:11434
+
+VISION_MODEL=bakllava
+
+
+EMBEDDING_MODEL_NAME = paraphrase-MiniLM-L3-v2
+
+DATA_GOV_API_KEY = 
+
+NEXT_PUBLIC_GROUNDTRUTH_AI_URL=http://localhost:8001/generate-truth
+NEXT_PUBLIC_GROUNDTRUTH_AI_VOICE_URL=http://localhost:8001/voice-query
+NEXT_PUBLIC_YIELDWISE_URL=http://localhost:8002/generate-plan
+NEXT_PUBLIC_FIELDSCOUT_AI_URL=http://localhost:8003/diagnose
+
+```
+
 Make the startup script executable (for macOS/Linux):
 
 ```
 
 chmod +x scripts/init-ollama.sh
+chmod +x reset_ai.sh
 
 ```
+
+Whenever you want to clear the AI cache and re-download/re-embed everything, just run 
+
+```
+
+./reset_ai.sh
+
+```
+
 
 Launch the entire application stack. This command will build all the images and download the AI models (phi-3:mini and llava). The first launch can take several minutes depending on your internet connection:
 
