@@ -25,5 +25,12 @@ FROM python:3.11
 WORKDIR /app
 COPY ./services/fieldscout_ai/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+
+# Pre-download the Hugging Face model
+# Copy the download script
+# COPY ./services/fieldscout_ai/download_model.py /app/download_model.py
+# Run the script to download and cache the model into the image
+# RUN python /app/download_model.py
+
 COPY ./services/shared /app/shared
 COPY ./services/fieldscout_ai/app /app/app

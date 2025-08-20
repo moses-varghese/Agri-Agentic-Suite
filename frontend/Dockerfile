@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-RUN npm install mic-recorder-to-mp3
+RUN npm install mic-recorder-to-mp3 react-markdown
 COPY . .
 # Make build-time env vars available
 ARG NEXT_PUBLIC_GROUNDTRUTH_AI_URL

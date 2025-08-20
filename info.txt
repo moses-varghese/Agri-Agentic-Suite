@@ -11,9 +11,7 @@ docker volume rm agri-agents_chroma_db
 
 
 Check Logs: Run docker-compose logs -f groundtruth_ai to see the "real-time" progress of the background document processing.
-
 Use the App: While the documents are processing, you can already use the frontend. It will respond with "The knowledge base is still being built..." until the process is complete.
-
 Inspect the DB: At any time, open a new terminal, activate your virtual environment (source venv/bin/activate), install pandas (pip install pandas tabulate), and run python inspect_db.py to see a neatly formatted table of what's in your vector database.
 
 
@@ -30,3 +28,19 @@ Click Copy to File… (in Chrome/Edge it’s “Export”).
 In the wizard:
 Choose base64 ASCII encoded certificate chain.
 Save it as govt.pem (Windows might default to .cer, just rename extension to .pem).
+
+
+
+Now, I want to do the folllowing:
+
+Demo Video (3–5 minutes)
+
+Walkthrough of your working prototype
+
+Show key use cases where your solution responds intelligently
+
+Simulate the real-world usage (e.g., farmer asks a question)
+
+Limitations and future work. Extra points to show failures of your solution and their fixes.
+
+can you give the exact talking points that I will speak for the above

@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
+from pathlib import Path
 
 class Settings(BaseSettings):
     """
@@ -28,10 +29,15 @@ class Settings(BaseSettings):
     # AI Models
     # OPENAI_API_KEY: str
 
+    DATA_GOV_API_KEY: str
+
     # Local AI Model Settings
     LOCAL_LLM_MODEL: str
     OLLAMA_API_BASE_URL: str
     EMBEDDING_MODEL_NAME: str
+    VISION_MODEL: str
+
+    # env_file = "/app/.env" if Path("/app/.env").exists() else "/run/secrets/.env"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8', extra='ignore')
 

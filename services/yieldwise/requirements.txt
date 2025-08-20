@@ -3,7 +3,7 @@ uvicorn[standard]
 pydantic
 pydantic-settings
 litellm
-#pandas
+pandas==2.1.2
 chromadb
 sentence-transformers
 langchain
@@ -13,3 +13,6 @@ pdf2image
 pytesseract
 Pillow
 ddgs
+scikit-learn==1.4.0
+sqlalchemy
+psycopg2-binary

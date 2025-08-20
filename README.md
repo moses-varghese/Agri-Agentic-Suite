@@ -127,6 +127,7 @@ Make the startup script executable (for macOS/Linux):
 
 chmod +x scripts/init-ollama.sh
 chmod +x reset_ai.sh
+chmod +x start.sh
 
 ```
 
@@ -135,6 +136,14 @@ Whenever you want to clear the AI cache and re-download/re-embed everything, jus
 ```
 
 ./reset_ai.sh
+
+```
+
+To start the services 
+
+```
+
+./start.sh
 
 ```
 

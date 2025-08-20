@@ -75,12 +75,19 @@ services:
     build:
       context: .
       dockerfile: ./services/yieldwise/Dockerfile
+    #   secrets: 
+    #     - .env
+    # secrets: # define the secret
+    #   - source: .env
+    #     target: /run/secrets/.env
     volumes:
       - ./local_data:/app/local_data
       - ./knowledge_documents:/app/knowledge_documents
       - chroma_db:/chroma_db 
     env_file:
       - ./.env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     ports:
       - "8002:8000"
     depends_on:
@@ -90,7 +97,8 @@ services:
         condition: service_healthy
     networks:
       - agri_net
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    command: >
+       sh -c "python /app/train_price_estimator.py && uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
   fieldscout_ai:
     container_name: fieldscout_ai_service
@@ -135,3 +143,7 @@ volumes:
   db_data:
   ollama_data:
   chroma_db: {}
+
+# secrets:
+#   .env:
+#     file: ./.env

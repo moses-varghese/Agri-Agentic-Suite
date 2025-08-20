@@ -66,6 +66,17 @@ from shared.core.config import settings
 from ddgs import DDGS
 from numpy import dot
 from numpy.linalg import norm
+import pickle
+import json
+
+import chromadb
+import pickle
+import pandas as pd
+import json
+from sqlalchemy import create_engine
+from sentence_transformers import SentenceTransformer
+from shared.core.config import settings
+
 
 class FinancialAgent:
     def __init__(self):
@@ -77,8 +88,95 @@ class FinancialAgent:
         # Connect to the same persistent ChromaDB that groundtruth_ai uses
         self.chroma_client = chromadb.PersistentClient(path="/chroma_db")
         self.collection = self.chroma_client.get_or_create_collection(name="agri_knowledge_base")
+
+
+        self.price_estimator = None
+        self.db_engine = None
+        
+        try:
+            # --- Load the pre-trained price estimation model ---
+            with open("app/models/price_estimator.pkl", 'rb') as f:
+                self.price_estimator = pickle.load(f)
+            print("✅ Price estimation model loaded.")
+
+            # --- Connect to the PostgreSQL database ---
+            #db_url = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_SERVER}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
+            self.db_engine = create_engine(settings.DATABASE_URL.replace("asyncpg", "psycopg2"))
+            # self.db_engine = create_engine(db_url)
+            print("✅ Successfully connected to PostgreSQL database.")
+
+        except FileNotFoundError:
+            print("⚠️ WARNING: Price prediction model not found. Predictions will be unavailable.")
+        except Exception as e:
+            print(f"❌ ERROR: Failed to initialize FinancialAgent: {e}")
+
+        # self.price_estimator = None
+        # self.commodity_data = None
+        # try:
+        #     with open("app/models/price_estimator.pkl", 'rb') as f:
+        #         self.price_estimator = pickle.load(f)
+        #     with open("/training_data/historical_prices.csv", 'r') as f:
+        #         self.commodity_data = pd.read_csv(f)
+        #     print("✅ Price estimation model and historical data loaded.")
+        # except FileNotFoundError:
+        #     print("⚠️ WARNING: Price prediction model or data not found.")
         
         print("✅ YieldWise Service: Initialization complete.")
+
+    def _get_price_estimation(self, crop: str, state: str, district: str) -> str:
+        """
+        Generates a price estimation, with a fallback to the state average
+        if the specific district is not found.
+        """
+        if not self.price_estimator or self.db_engine is None:
+            return "Price estimation model or database is not available."
+        
+        try:
+            # --- Attempt 1: Predict for the specific district ---
+            current_month = pd.to_datetime('today').month
+            input_data = pd.DataFrame({
+                'Commodity': [crop], 'State': [state],
+                'District': [district], 'Month': [current_month]
+            })
+            
+            # The model's transformer might not have seen this specific district
+            # We wrap this in a try-except block to handle that case
+            try:
+                predicted_price = self.price_estimator.predict(input_data)[0]
+                return f"Estimated current market price for {crop} in {district}, {state} is approximately ₹{predicted_price:.2f} per unit."
+            except Exception:
+                print(f"⚠️ Could not predict for district '{district}'. Falling back to state average.")
+
+                # --- Attempt 2: Fallback to State Average ---
+
+                query = f"""
+                    SELECT AVG(price) as avg_price 
+                    FROM commodity_prices 
+                    WHERE LOWER(commodity) = LOWER('{crop}') 
+                    AND LOWER(state) = LOWER('{state}');
+                """
+                with self.db_engine.connect() as connection:
+                    result = connection.execute(query).fetchone()
+
+                if result and result.avg_price:
+                    return f"Could not find specific data for {district}. The average price for {crop} in {state} is ₹{result.avg_price:.2f} per Quintal."
+                else:
+                    return f"Could not find any price data for {crop} in {state}."
+
+                # state_data = self.commodity_data[
+                #     (self.commodity_data['Commodity'].str.lower() == crop.lower()) &
+                #     (self.commodity_data['State'].str.lower() == state.lower())
+                # ]
+
+                # if not state_data.empty:
+                #     avg_price = state_data['Price'].mean()
+                #     return f"Could not find data for {district}. The average price for {crop} in {state} is ₹{avg_price:.2f} per unit."
+                # else:
+                #     return f"Could not find any price data for {crop} in {state}."
+
+        except Exception as e:
+            print(f"❌ Price estimation failed: {e}")
+            return "Could not generate a price estimation."
 
     
     def _web_search(self, query: str):
@@ -146,13 +244,12 @@ class FinancialAgent:
         print("No specific financial information found in the documents.")
         return None
 
-    async def get_financial_plan(self, land_size: float, crop: str) -> dict:
+    async def get_financial_plan(self, land_size: float, crop: str, state: str, district: str) -> dict:
         from litellm import acompletion
         
         # Create a detailed query describing the user's situation
-        user_situation = f"A farmer with {land_size} acres of land planning to grow {crop} needs a financial plan. They are interested in loans, government schemes like the Kisan Credit Card, and income support."
-        
-        print(f"🔎 Performing semantic search and Searching for financial context for: '{crop} farming at {land_size} acres'")
+        user_situation = f"A farmer with {land_size} acres of land in {district}, {state} planning to grow {crop} needs a financial plan. They are interested in loans, government schemes and income support."
+        print(f"🔎 Performing semantic search and Searching for financial context for: '{crop} farming at {land_size} acres in {district}, {state}'")
         context = self._find_relevant_financial_context(user_situation)
 
         if not context:
@@ -160,6 +257,10 @@ class FinancialAgent:
             context = "No specific information available."
 
         print(f"📝 Context found: '{context}'")
+
+        # --- Get the price estimation ---
+        price_estimation = self._get_price_estimation(crop, state, district)
+
 
         # A more sophisticated prompt for financial analysis
         system_prompt = """
@@ -174,8 +275,7 @@ class FinancialAgent:
         7.  If the context is NOT relevant, you MUST state that you do not have enough information on that specific topic, and do not use the irrelevant context.
         8.  CRITICAL RULE: Do not invent schemes or financial details not present in the context."""
 
-        user_prompt = f"Context: \"{context}\"\n\nUser Situation: \"{user_situation}\"\n\nFinancial Plan:"
-        
+        user_prompt = f"Context: \"{context}\"\n\nLive Data: \"{price_estimation}\"\n\nUser Situation: \"{user_situation}\"\n\nFinancial Plan:"
         try:
             print(f"🤖 Sending request to local LLM: {settings.LOCAL_LLM_MODEL}")
             response = await acompletion(

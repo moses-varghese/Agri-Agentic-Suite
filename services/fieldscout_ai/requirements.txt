@@ -5,3 +5,8 @@ litellm
 pydantic-settings
 python-multipart
 Pillow
+#timm
+#torch
+transformers
+# You may need to add this for specific image processing features
+# scikit-image

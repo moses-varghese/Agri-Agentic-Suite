@@ -6,6 +6,8 @@ import Link from 'next/link';
 export default function HomePage() {
   const [landSize, setLandSize] = useState('');
   const [crop, setCrop] = useState('');
+  const [state, setState] = useState(''); // 👈 Add state for State
+  const [district, setDistrict] = useState(''); // 👈 Add state for District
   const [plan, setPlan] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +23,12 @@ export default function HomePage() {
         
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ land_size: parseFloat(landSize), crop: crop }),
+        body: JSON.stringify({
+          land_size: parseFloat(landSize),
+          crop: crop,
+          state: state,
+          district: district
+        }),
       });
 
       if (!response.ok) {
@@ -75,6 +82,34 @@ export default function HomePage() {
             required
           />
         </div>
+
+        <div className="form-group">
+          <label htmlFor="state">State</label>
+          <input
+            id="state"
+            type="text"
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            placeholder="e.g., Karnataka"
+            required
+          />
+        </div>
+
+        {/* 👇 Add District input field */}
+        <div className="form-group">
+          <label htmlFor="district">District</label>
+          <input
+            id="district"
+            type="text"
+            value={district}
+            onChange={(e) => setDistrict(e.target.value)}
+            placeholder="e.g., Bangalore"
+            required
+          />
+        </div>
+
+
+
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Generating...' : 'Generate Plan'}
         </button>
