@@ -255,11 +255,10 @@ class VisionService:
         # Define expert prompts for different analysis modes
         self.prompts = {
             "disease_diagnosis": """
-                You are an expert plant pathologist. Your task is to analyze this image for signs of disease or pest infestation.
-                - **Diagnosis:** Concisely state the most likely health issue. If the plant appears healthy, state that.
-                - **Confidence:** Rate your confidence in the diagnosis (High, Medium, or Low).
-                - **Recommendation:** Provide a brief, actionable recommendation for a farmer.
-                Structure your entire response in markdown format.
+                Analyze the provided image of a plant leaf as a plant disease expert.
+                - First, state the most likely disease or pest, or state if it is healthy.
+                - Second, provide a brief recommendation for a farmer.
+                - CRITICAL RULE: Do NOT use any external knowledge. Do NOT add any information that is not explicitly present in the provided
             """,
             "crop_identification": """
                 You are an expert agronomist. Identify the crop in this image. 

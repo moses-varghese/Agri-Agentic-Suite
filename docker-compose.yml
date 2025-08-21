@@ -57,8 +57,11 @@ services:
       - ./knowledge_documents:/app/knowledge_documents
       # - ./chroma_db_volume:/chroma_db 
       # this is for inspecting vectordb by user to check update progress which is a bind volume
+      - huggingface_cache:/shared/hf_cache
     env_file:
       - ./.env
+    environment:
+      - HG_HOME=${HF_HOME}
     ports:
       - "8001:8000"
     depends_on:
@@ -75,19 +78,16 @@ services:
     build:
       context: .
       dockerfile: ./services/yieldwise/Dockerfile
-    #   secrets: 
-    #     - .env
-    # secrets: # define the secret
-    #   - source: .env
-    #     target: /run/secrets/.env
     volumes:
       - ./local_data:/app/local_data
       - ./knowledge_documents:/app/knowledge_documents
       - chroma_db:/chroma_db 
+      - huggingface_cache:/shared/hf_cache
     env_file:
       - ./.env
     environment:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      HF_HOME: ${HF_HOME}
     ports:
       - "8002:8000"
     depends_on:
@@ -142,8 +142,5 @@ networks:
 volumes:
   db_data:
   ollama_data:
-  chroma_db: {}
-
-# secrets:
-#   .env:
-#     file: ./.env
+  chroma_db:
+  huggingface_cache: {}

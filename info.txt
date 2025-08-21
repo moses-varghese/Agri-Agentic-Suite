@@ -44,3 +44,8 @@ Simulate the real-world usage (e.g., farmer asks a question)
 Limitations and future work. Extra points to show failures of your solution and their fixes.
 
 can you give the exact talking points that I will speak for the above
+
+
+
+Improvments:
+Download transformer models offline https://huggingface.co/docs/transformers/installation#offline-mode

@@ -1,6 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
-from pathlib import Path
 
 class Settings(BaseSettings):
     """
@@ -37,7 +36,8 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL_NAME: str
     VISION_MODEL: str
 
-    # env_file = "/app/.env" if Path("/app/.env").exists() else "/run/secrets/.env"
+    # HuggingFace cache
+    HF_HOME: str = "/root/.cache/huggingface"  # default if not set
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8', extra='ignore')
 

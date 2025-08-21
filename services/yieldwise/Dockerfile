@@ -18,4 +18,5 @@ COPY ./services/yieldwise/train_price_estimator.py /app/train_price_estimator.py
 
 # Copy the main application code after the script has run
 COPY ./services/shared /app/shared
+COPY ./services/utils /app/utils
 COPY ./services/yieldwise/app /app/app

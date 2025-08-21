@@ -35,6 +35,7 @@ RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
 # Copy the shared code and the service's source code into the container
 COPY ./services/shared /app/shared
+COPY ./services/utils /app/utils
 COPY ./services/groundtruth_ai/app /app/app
 
 # Copy the new scripts

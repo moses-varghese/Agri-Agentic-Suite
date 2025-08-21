@@ -206,34 +206,30 @@ def train_and_save_estimator():
     # data_path = os.path.join(model_dir, "cleaned_commodities.json")
     
     # --- 1. Connect to PostgreSQL ---
-    #db_url = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_SERVER}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
     engine = create_engine(settings.DATABASE_URL.replace("asyncpg", "psycopg2"))
-    #engine = create_engine(db_url)
 
     table_name = "commodity_prices"
     
     print("--- Starting Price Estimation Model Training ---")
 
+    daily_df = None
     try:
         BASE_URL = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070"
-        params = {
-        "api-key": settings.DATA_GOV_API_KEY,
-        "format": "json",
-        "offset": 0,
-        "limit": 1
-        }
-        resp = requests.get(BASE_URL, params=params)
-        # resp.raise_for_status()
-        data = resp.json()
-        total = data["total"]
-        daily_data_url = f"{BASE_URL}?api-key={settings.DATA_GOV_API_KEY}&format=csv&offset=0&limit={total}"
-        # --- 2. Sync Daily Data with Database ---
-        # Download the latest daily data
-        print(f"Downloading data from data.gov.in...")
-        daily_df = pd.read_csv(daily_data_url)
-        print("Data downloaded successfully.")
+        params = {"api-key": settings.DATA_GOV_API_KEY, "format": "json", "offset": 0, "limit": 1}
+        resp = requests.get(BASE_URL, params=params, timeout=30)
+        resp.raise_for_status()
+        total = resp.json().get("total", 0)
+        if total > 0:
+            daily_data_url = f"{BASE_URL}?api-key={settings.DATA_GOV_API_KEY}&format=csv&offset=0&limit={total}"
+            print(f"Downloading {total} records from data.gov.in...")
+            daily_df = pd.read_csv(daily_data_url)
+            print("✅ Data downloaded successfully.")
+    except Exception as e:
+        print(f"⚠️ Could not fetch API data: {e}")
 
-        #Rename columns for easier access
+
+    new_records_df = pd.DataFrame()
+    if daily_df is not None and not daily_df.empty:
         daily_df.rename(columns={
             'Modal_x0020_Price': 'price',
             'Min_x0020_Price': 'min_price',
@@ -244,89 +240,141 @@ def train_and_save_estimator():
             'Arrival_Date': 'date'
         }, inplace=True)
 
-        # Clean and prepare the new data
         daily_df = daily_df[['date', 'state', 'district', 'commodity', 'min_price', 'max_price', 'price']].dropna()
         daily_df['date'] = pd.to_datetime(daily_df['date'], dayfirst=True)
         daily_df['month'] = daily_df['date'].dt.month
         daily_df['year'] = daily_df['date'].dt.year
 
-        def clean_commodity(name):
-            name = re.sub(r'\(.*\)', '', name) # Remove anything in parentheses
-            name = name.strip()
-            return name
-        
-        daily_df['commodity'] = daily_df['commodity'].apply(clean_commodity)
-        
-        # Check if table exists, if so, load existing data
+        daily_df['commodity'] = daily_df['commodity'].apply(lambda x: re.sub(r'\(.*\)', '', str(x)).strip())
+
         with engine.connect() as connection:
             if pd.io.sql.has_table(table_name, connection):
-                print(f"Table '{table_name}' exists. Fetching existing data for deduplication.")
+                print(f"Table '{table_name}' exists. Checking for new records...")
                 existing_df = pd.read_sql_table(table_name, connection, index_col='index')
-                
-                # Find rows in daily_df that are not in existing_df
-                merged = daily_df.merge(existing_df, on=['date', 'month', 'year', 'state', 'district', 'commodity', 'min_price', 'max_price'], how='left', indicator=True)
+                for col in ['month', 'year', 'min_price', 'max_price']:
+                    daily_df[col] = daily_df[col].astype(float)
+                    existing_df[col] = existing_df[col].astype(float)
+
+                merged = daily_df.merge(
+                    existing_df,
+                    on=['date', 'month', 'year', 'state', 'district', 'commodity', 'min_price', 'max_price'],
+                    how='left',
+                    indicator=True
+                )
                 new_records_df = merged[merged['_merge'] == 'left_only'].drop(columns=['_merge', 'price_y'])
                 new_records_df.rename(columns={'price_x': 'price'}, inplace=True)
             else:
                 print(f"Table '{table_name}' does not exist. Treating all downloaded data as new.")
+                for col in ['month', 'year', 'min_price', 'max_price']:
+                    daily_df[col] = daily_df[col].astype(float)
                 new_records_df = daily_df
 
-        # Append only the new records to the database
         if not new_records_df.empty:
             print(f"Appending {len(new_records_df)} new records to the database...")
             new_records_df.to_sql(table_name, engine, if_exists='append')
             print("✅ New data saved to PostgreSQL.")
         else:
             print("✅ No new daily data to add. Database is up to date.")
-
-        # --- 3. Train Model on the ENTIRE Dataset from PostgreSQL ---
-        print("Loading full dataset from PostgreSQL for retraining...")
-        full_df = pd.read_sql_table(table_name, engine, index_col='index')
-
-        if full_df.empty:
-            print("⚠️ No data available in the database to train the model. Skipping training.")
+    else:
+        if os.path.exists(model_path):
+            print(f"⚠️ Skipping API sync (no new data). Using existing model at '{model_path}'")
             return
-        
-        # unique_commodities = sorted(full_df['commodity'].unique().tolist())
-        # with open(data_path, 'w') as f: json.dump(unique_commodities, f)
+        else:
+            print("Checking if data available in db for training...")
+            full_df = pd.DataFrame()
+            try:
+                full_df = pd.read_sql_table(table_name, engine, index_col='index')
+            except Exception as e:
+                print(f"⚠️ Could not load from database: {e}")
 
-        features = ['commodity', 'state', 'district', 'month', 'year', 'min_price', 'max_price']
-        target = 'price'
-        X = full_df[features]
-        y = full_df[target]
+            if full_df.empty:
+                print("⚠️ No data available in DB for training, nor new data to fetch and no saved model available. Cannot continue to use estimator")
+                return
+            
+            print("Data available in db for training...")
+            features = ['commodity', 'state', 'district', 'month', 'year', 'min_price', 'max_price']
+            target = 'price'
+            X = full_df[features]
+            y = full_df[target]
 
-        # Define and train the model pipeline
-        # preprocessor = ColumnTransformer(
-        #     transformers=[('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), ['commodity', 'state', 'district'])],
-        #     remainder='passthrough').set_output(transform="pandas")
+            preprocessor = ColumnTransformer(
+                transformers=[
+                    ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False),
+                    ['commodity', 'state', 'district']),
+                    ('num', FunctionTransformer(validate=False),
+                    ['month', 'year', 'min_price', 'max_price'])
+                ]
+            ).set_output(transform="pandas")
 
-        # preprocessor = ColumnTransformer(
-        # transformers=[
-        #     ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False),
-        #     ['commodity', 'state', 'district']),
-        #     ('num', 'passthrough', ['month', 'year', 'min_price', 'max_price'])
-        # ]).set_output(transform="pandas")
+            model = Pipeline(steps=[
+                ('preprocessor', preprocessor),
+                ('regressor', GradientBoostingRegressor(n_estimators=50, random_state=42))
+            ])
 
 
-        preprocessor = ColumnTransformer(
+            try:
+                print(f"Training model on {len(full_df)} records...")
+                model.fit(X, y)
+                with open(model_path, 'wb') as f:
+                    pickle.dump(model, f)
+                print(f"✅ Model trained and saved at '{model_path}'")
+            except Exception as e:
+                print(f"❌ Training failed: {e}. No saved model available. Service cannot proceed")
+
+            # raise RuntimeError("⚠️ No new data and no existing model found. Estimator cannot be used.")
+
+
+    print("Loading full dataset from PostgreSQL for retraining...")
+    full_df = pd.DataFrame()
+    try:
+        full_df = pd.read_sql_table(table_name, engine, index_col='index')
+    except Exception as e:
+        print(f"⚠️ Could not load from database: {e}")
+
+    if full_df.empty:
+        print("⚠️ No data available in DB for training.")
+
+        # Fallback to existing model
+        if os.path.exists(model_path):
+            print(f"✅ Using previously saved model at '{model_path}' for predictions.")
+            return
+        else:
+            print("❌ No data in DB and no saved model available. Cannot continue.")
+            return
+    
+
+    features = ['commodity', 'state', 'district', 'month', 'year', 'min_price', 'max_price']
+    target = 'price'
+    X = full_df[features]
+    y = full_df[target]
+
+    preprocessor = ColumnTransformer(
         transformers=[
             ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False),
-            ['commodity', 'state', 'district']),
-            # Use FunctionTransformer(identity) instead of 'passthrough'
-            ('num', FunctionTransformer(validate=False), ['month', 'year', 'min_price', 'max_price'])]).set_output(transform="pandas")
+             ['commodity', 'state', 'district']),
+            ('num', FunctionTransformer(validate=False),
+             ['month', 'year', 'min_price', 'max_price'])
+        ]
+    ).set_output(transform="pandas")
 
-        model = Pipeline(steps=[
-            ('preprocessor', preprocessor),
-            ('regressor', GradientBoostingRegressor(n_estimators=50, random_state=42))])
+    model = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('regressor', GradientBoostingRegressor(n_estimators=50, random_state=42))
+    ])
 
-        print(f"Retraining model on {len(full_df)} total data points...")
+
+    try:
+        print(f"Retraining model on {len(full_df)} records...")
         model.fit(X, y)
-
-        with open(model_path, 'wb') as pkl_file: pickle.dump(model, pkl_file)
-        print(f"✅ Model retrained and saved successfully to '{model_path}'")
-
+        with open(model_path, 'wb') as f:
+            pickle.dump(model, f)
+        print(f"✅ Model retrained and saved at '{model_path}'")
     except Exception as e:
-        print(f"❌ ERROR: Model training failed: {e}")
+        print(f"❌ Training failed: {e}")
+        if os.path.exists(model_path):
+            print(f"⚠️ Falling back to saved model at '{model_path}'.")
+        else:
+            print("❌ No saved model available. Service cannot proceed.")
 
 if __name__ == "__main__":
     train_and_save_estimator()

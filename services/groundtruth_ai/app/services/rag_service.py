@@ -15,13 +15,16 @@ import pytesseract
 from PIL import Image
 import threading
 
+from utils.model_loader import load_embedding_model
+
 class RAGService:
     def __init__(self):
         print("🤖 GroundTruth AI Service: Initializing with Vector Database...")
         
         # 1. Initialize the embedding model from settings to convert text to vectors
         print(f" modeli: {settings.EMBEDDING_MODEL_NAME}")
-        self.embedding_model = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
+        # self.embedding_model = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
+        self.embedding_model = load_embedding_model(settings.EMBEDDING_MODEL_NAME, settings.HF_HOME)
         
         # 2. Initialize the ChromaDB client for vector storage
         # This data will be saved in the '/chroma_db' volume you created

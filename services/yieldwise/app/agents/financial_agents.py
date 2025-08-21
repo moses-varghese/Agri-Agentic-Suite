@@ -73,9 +73,11 @@ import chromadb
 import pickle
 import pandas as pd
 import json
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sentence_transformers import SentenceTransformer
 from shared.core.config import settings
+
+from utils.model_loader import load_embedding_model
 
 
 class FinancialAgent:
@@ -83,7 +85,9 @@ class FinancialAgent:
         print("💰 YieldWise Service: Initializing with RAG capabilities...")
         
         # Initialize the embedding model
-        self.embedding_model = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
+        # self.embedding_model = SentenceTransformer(settings.EMBEDDING_MODEL_NAME)
+
+        self.embedding_model = load_embedding_model(settings.EMBEDDING_MODEL_NAME, settings.HF_HOME)
         
         # Connect to the same persistent ChromaDB that groundtruth_ai uses
         self.chroma_client = chromadb.PersistentClient(path="/chroma_db")
@@ -136,8 +140,7 @@ class FinancialAgent:
             current_month = pd.to_datetime('today').month
             input_data = pd.DataFrame({
                 'Commodity': [crop], 'State': [state],
-                'District': [district], 'Month': [current_month]
-            })
+                'District': [district], 'Month': [current_month]})
             
             # The model's transformer might not have seen this specific district
             # We wrap this in a try-except block to handle that case
@@ -156,7 +159,7 @@ class FinancialAgent:
                     AND LOWER(state) = LOWER('{state}');
                 """
                 with self.db_engine.connect() as connection:
-                    result = connection.execute(query).fetchone()
+                    result = connection.execute(text(query)).fetchone()
 
                 if result and result.avg_price:
                     return f"Could not find specific data for {district}. The average price for {crop} in {state} is ₹{result.avg_price:.2f} per Quintal."
