@@ -127,7 +127,6 @@ Make the startup script executable (for macOS/Linux):
 
 chmod +x scripts/init-ollama.sh
 chmod +x reset_ai.sh
-chmod +x start.sh
 
 ```
 
@@ -138,15 +137,6 @@ Whenever you want to clear the AI cache and re-download/re-embed everything, jus
 ./reset_ai.sh
 
 ```
-
-To start the services 
-
-```
-
-./start.sh
-
-```
-
 
 Launch the entire application stack. This command will build all the images and download the AI models (phi-3:mini and llava). The first launch can take several minutes depending on your internet connection:
 
