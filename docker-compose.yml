@@ -83,6 +83,7 @@ services:
       - ./knowledge_documents:/app/knowledge_documents
       - chroma_db:/chroma_db 
       - huggingface_cache:/shared/hf_cache
+      - yieldwise_models:/models
     env_file:
       - ./.env
     environment:
@@ -142,5 +143,6 @@ networks:
 volumes:
   db_data:
   ollama_data:
-  chroma_db:
+  chroma_db: {}
   huggingface_cache: {}
+  yieldwise_models: {}

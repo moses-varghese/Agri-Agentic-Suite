@@ -200,9 +200,10 @@ def train_and_save_estimator():
     Connects to PostgreSQL, syncs the latest daily data, and retrains the model
     on the entire persistent dataset.
     """
-    model_dir = "app/models"
+    model_dir = "/models"
     os.makedirs(model_dir, exist_ok=True)
     model_path = os.path.join(model_dir, "price_estimator.pkl")
+    features_path = os.path.join(model_dir, "model_features.json")
     # data_path = os.path.join(model_dir, "cleaned_commodities.json")
     
     # --- 1. Connect to PostgreSQL ---
@@ -223,12 +224,13 @@ def train_and_save_estimator():
             daily_data_url = f"{BASE_URL}?api-key={settings.DATA_GOV_API_KEY}&format=csv&offset=0&limit={total}"
             print(f"Downloading {total} records from data.gov.in...")
             daily_df = pd.read_csv(daily_data_url)
-            print("✅ Data downloaded successfully.")
+            print("✅ New Data downloaded successfully.")
     except Exception as e:
-        print(f"⚠️ Could not fetch API data: {e}")
+        print(f"⚠️ Could not fetch new data from API: {e}. Will proceed with existing data if available.")
 
 
     new_records_df = pd.DataFrame()
+    new_records_added = False
     if daily_df is not None and not daily_df.empty:
         daily_df.rename(columns={
             'Modal_x0020_Price': 'price',
@@ -272,77 +274,55 @@ def train_and_save_estimator():
         if not new_records_df.empty:
             print(f"Appending {len(new_records_df)} new records to the database...")
             new_records_df.to_sql(table_name, engine, if_exists='append')
+            new_records_added = True
             print("✅ New data saved to PostgreSQL.")
         else:
             print("✅ No new daily data to add. Database is up to date.")
-    else:
-        if os.path.exists(model_path):
-            print(f"⚠️ Skipping API sync (no new data). Using existing model at '{model_path}'")
-            return
-        else:
-            print("Checking if data available in db for training...")
-            full_df = pd.DataFrame()
-            try:
-                full_df = pd.read_sql_table(table_name, engine, index_col='index')
-            except Exception as e:
-                print(f"⚠️ Could not load from database: {e}")
-
-            if full_df.empty:
-                print("⚠️ No data available in DB for training, nor new data to fetch and no saved model available. Cannot continue to use estimator")
-                return
-            
-            print("Data available in db for training...")
-            features = ['commodity', 'state', 'district', 'month', 'year', 'min_price', 'max_price']
-            target = 'price'
-            X = full_df[features]
-            y = full_df[target]
-
-            preprocessor = ColumnTransformer(
-                transformers=[
-                    ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False),
-                    ['commodity', 'state', 'district']),
-                    ('num', FunctionTransformer(validate=False),
-                    ['month', 'year', 'min_price', 'max_price'])
-                ]
-            ).set_output(transform="pandas")
-
-            model = Pipeline(steps=[
-                ('preprocessor', preprocessor),
-                ('regressor', GradientBoostingRegressor(n_estimators=50, random_state=42))
-            ])
 
 
-            try:
-                print(f"Training model on {len(full_df)} records...")
-                model.fit(X, y)
-                with open(model_path, 'wb') as f:
-                    pickle.dump(model, f)
-                print(f"✅ Model trained and saved at '{model_path}'")
-            except Exception as e:
-                print(f"❌ Training failed: {e}. No saved model available. Service cannot proceed")
-
-            # raise RuntimeError("⚠️ No new data and no existing model found. Estimator cannot be used.")
-
-
-    print("Loading full dataset from PostgreSQL for retraining...")
-    full_df = pd.DataFrame()
-    try:
-        full_df = pd.read_sql_table(table_name, engine, index_col='index')
-    except Exception as e:
-        print(f"⚠️ Could not load from database: {e}")
-
-    if full_df.empty:
-        print("⚠️ No data available in DB for training.")
-
-        # Fallback to existing model
-        if os.path.exists(model_path):
-            print(f"✅ Using previously saved model at '{model_path}' for predictions.")
-            return
-        else:
-            print("❌ No data in DB and no saved model available. Cannot continue.")
-            return
+    # We retrain if new records were added OR if the model file doesn't exist
+    if not new_records_added and os.path.exists(model_path):
+        print("✅ No new data and model already exists. Skipping retraining.")
+        return
     
 
+    print("Loading full dataset from PostgreSQL for training...")
+    try:
+        full_df = pd.read_sql_table(table_name, engine)
+        if full_df.empty:
+            raise ValueError("Database table is empty.")
+    except Exception as e:
+        print(f"❌ Could not load data from database: {e}.")
+        if os.path.exists(model_path):
+             print(f"⚠️ Falling back to previously saved model at '{model_path}'.")
+             return
+        else:
+            print("❌ No data and no saved model. Price estimator will be unavailable.")
+            return
+
+
+
+    
+
+
+
+    # else:
+    #     if os.path.exists(model_path):
+    #         print(f"⚠️ Skipping API sync (no new data). Using existing model at '{model_path}'")
+    #         return
+    #     else:
+    #         print("Checking if data available in db for training...")
+    #         full_df = pd.DataFrame()
+    #         try:
+    #             full_df = pd.read_sql_table(table_name, engine, index_col='index')
+    #         except Exception as e:
+    #             print(f"⚠️ Could not load from database: {e}")
+
+    #         if full_df.empty:
+    #             print("⚠️ No data available in DB for training, nor new data to fetch and no saved model available. Cannot continue to use estimator")
+    #             return
+            
+    print("Data available in db for training...")
     features = ['commodity', 'state', 'district', 'month', 'year', 'min_price', 'max_price']
     target = 'price'
     X = full_df[features]
@@ -351,9 +331,9 @@ def train_and_save_estimator():
     preprocessor = ColumnTransformer(
         transformers=[
             ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False),
-             ['commodity', 'state', 'district']),
+            ['commodity', 'state', 'district']),
             ('num', FunctionTransformer(validate=False),
-             ['month', 'year', 'min_price', 'max_price'])
+            ['month', 'year', 'min_price', 'max_price'])
         ]
     ).set_output(transform="pandas")
 
@@ -362,19 +342,85 @@ def train_and_save_estimator():
         ('regressor', GradientBoostingRegressor(n_estimators=50, random_state=42))
     ])
 
-
     try:
-        print(f"Retraining model on {len(full_df)} records...")
+        # print(f"Retraining model on {len(full_df)} total records...")
+        with open(features_path, 'w') as f:
+            json.dump(features, f) # Ensure features is the list being saved
+
+        print(f"✅ Model features saved. Retraining model on {len(full_df)} total records...")
         model.fit(X, y)
+
         with open(model_path, 'wb') as f:
             pickle.dump(model, f)
         print(f"✅ Model retrained and saved at '{model_path}'")
     except Exception as e:
-        print(f"❌ Training failed: {e}")
-        if os.path.exists(model_path):
-            print(f"⚠️ Falling back to saved model at '{model_path}'.")
-        else:
-            print("❌ No saved model available. Service cannot proceed.")
+        print(f"❌ Model training failed: {e}")
+
+
+
+    #         try:
+    #             print(f"Training model on {len(full_df)} records...")
+    #             model.fit(X, y)
+    #             with open(model_path, 'wb') as f:
+    #                 pickle.dump(model, f)
+    #             print(f"✅ Model trained and saved at '{model_path}'")
+    #         except Exception as e:
+    #             print(f"❌ Training failed: {e}. No saved model available. Service cannot proceed")
+
+    #         # raise RuntimeError("⚠️ No new data and no existing model found. Estimator cannot be used.")
+
+
+    # print("Loading full dataset from PostgreSQL for retraining...")
+    # full_df = pd.DataFrame()
+    # try:
+    #     full_df = pd.read_sql_table(table_name, engine, index_col='index')
+    # except Exception as e:
+    #     print(f"⚠️ Could not load from database: {e}")
+
+    # if full_df.empty:
+    #     print("⚠️ No data available in DB for training.")
+
+    #     # Fallback to existing model
+    #     if os.path.exists(model_path):
+    #         print(f"✅ Using previously saved model at '{model_path}' for predictions.")
+    #         return
+    #     else:
+    #         print("❌ No data in DB and no saved model available. Cannot continue.")
+    #         return
+    
+
+    # features = ['commodity', 'state', 'district', 'month', 'year', 'min_price', 'max_price']
+    # target = 'price'
+    # X = full_df[features]
+    # y = full_df[target]
+
+    # preprocessor = ColumnTransformer(
+    #     transformers=[
+    #         ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False),
+    #          ['commodity', 'state', 'district']),
+    #         ('num', FunctionTransformer(validate=False),
+    #          ['month', 'year', 'min_price', 'max_price'])
+    #     ]
+    # ).set_output(transform="pandas")
+
+    # model = Pipeline(steps=[
+    #     ('preprocessor', preprocessor),
+    #     ('regressor', GradientBoostingRegressor(n_estimators=50, random_state=42))
+    # ])
+
+
+    # try:
+    #     print(f"Retraining model on {len(full_df)} records...")
+    #     model.fit(X, y)
+    #     with open(model_path, 'wb') as f:
+    #         pickle.dump(model, f)
+    #     print(f"✅ Model retrained and saved at '{model_path}'")
+    # except Exception as e:
+    #     print(f"❌ Training failed: {e}")
+    #     if os.path.exists(model_path):
+    #         print(f"⚠️ Falling back to saved model at '{model_path}'.")
+    #     else:
+    #         print("❌ No saved model available. Service cannot proceed.")
 
 if __name__ == "__main__":
     train_and_save_estimator()

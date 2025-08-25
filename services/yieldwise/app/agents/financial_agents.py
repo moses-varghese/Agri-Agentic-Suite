@@ -96,12 +96,17 @@ class FinancialAgent:
 
         self.price_estimator = None
         self.db_engine = None
+        self.model_features = None
         
         try:
             # --- Load the pre-trained price estimation model ---
-            with open("app/models/price_estimator.pkl", 'rb') as f:
+            with open("/models/price_estimator.pkl", 'rb') as f:
                 self.price_estimator = pickle.load(f)
             print("✅ Price estimation model loaded.")
+
+            with open("/models/model_features.json", 'r') as f:
+                self.model_features = json.load(f)
+            print("✅ Features loaded.")
 
             # --- Connect to the PostgreSQL database ---
             #db_url = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_SERVER}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
@@ -132,31 +137,53 @@ class FinancialAgent:
         Generates a price estimation, with a fallback to the state average
         if the specific district is not found.
         """
-        if not self.price_estimator or self.db_engine is None:
+        if not all([self.price_estimator, self.db_engine, self.model_features]):
             return "Price estimation model or database is not available."
         
         try:
             # --- Attempt 1: Predict for the specific district ---
-            current_month = pd.to_datetime('today').month
+            # A simple way is to take the most recent state average for the crop.
+            query = f"""
+                SELECT AVG(min_price) as avg_min, AVG(max_price) as avg_max
+                FROM commodity_prices
+                WHERE LOWER(commodity) = LOWER('{crop}') AND LOWER(state) = LOWER('{state}')
+                AND date = (SELECT MAX(date) FROM commodity_prices);
+            """
+            with self.db_engine.connect() as connection:
+                price_range = connection.execute(text(query)).fetchone()
+
+            if not (price_range and price_range.avg_min):
+                return f"Not enough data to estimate price range for {crop} in {state}."
+            
+            today = pd.to_datetime('today')
             input_data = pd.DataFrame({
-                'Commodity': [crop], 'State': [state],
-                'District': [district], 'Month': [current_month]})
+                'commodity': [crop], 'state': [state],
+                'district': [district], 'month': [today.month], 'year': [today.year],
+                'min_price': [price_range.avg_min], 'max_price': [price_range.avg_max]})
+
+            # Reorder columns to match the training order
+            input_data = input_data[self.model_features]
             
             # The model's transformer might not have seen this specific district
             # We wrap this in a try-except block to handle that case
             try:
                 predicted_price = self.price_estimator.predict(input_data)[0]
-                return f"Estimated current market price for {crop} in {district}, {state} is approximately ₹{predicted_price:.2f} per unit."
+                return f"Estimated current market price for {crop} in {district}, {state} is approximately ₹{predicted_price:.2f} per Quintal (based on a typical price range of ₹{price_range.avg_min:.2f} to ₹{price_range.avg_max:.2f})."
+
             except Exception:
                 print(f"⚠️ Could not predict for district '{district}'. Falling back to state average.")
 
                 # --- Attempt 2: Fallback to State Average ---
 
                 query = f"""
-                    SELECT AVG(price) as avg_price 
-                    FROM commodity_prices 
-                    WHERE LOWER(commodity) = LOWER('{crop}') 
-                    AND LOWER(state) = LOWER('{state}');
+                    WITH latest_date AS (
+                        SELECT MAX(date) as max_date FROM commodity_prices
+                    )
+                    SELECT AVG(price) as avg_price
+                    FROM commodity_prices, latest_date
+                    WHERE LOWER(commodity) = LOWER('{crop}')
+                    AND LOWER(state) = LOWER('{state}')
+                    AND date_trunc('month', date) = date_trunc('month', latest_date.max_date);
                 """
                 with self.db_engine.connect() as connection:
                     result = connection.execute(text(query)).fetchone()
@@ -164,7 +191,7 @@ class FinancialAgent:
                 if result and result.avg_price:
                     return f"Could not find specific data for {district}. The average price for {crop} in {state} is ₹{result.avg_price:.2f} per Quintal."
                 else:
-                    return f"Could not find any price data for {crop} in {state}."
+                    return f"Could not find any price data for {crop} in {state}. Not enough data to estimate price"
 
                 # state_data = self.commodity_data[
                 #     (self.commodity_data['Commodity'].str.lower() == crop.lower()) &
