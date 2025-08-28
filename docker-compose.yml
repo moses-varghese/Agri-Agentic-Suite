@@ -49,7 +49,7 @@ services:
       context: .
       dockerfile: ./services/groundtruth_ai/Dockerfile
     volumes:
-      - ./local_data:/app/local_data
+      # - ./local_data:/app/local_data
       - chroma_db:/chroma_db 
       # this is a named volume which should be on and not the bind volume but bind volume can be on to just inspect. 
       # two same volume of bind and named cannot be activated. if both on, then the last one under volumes mentioned would be active. named vol managed 
@@ -61,7 +61,7 @@ services:
     env_file:
       - ./.env
     environment:
-      - HG_HOME=${HF_HOME}
+      - HF_HOME=${HF_HOME}
     ports:
       - "8001:8000"
     depends_on:
@@ -79,7 +79,7 @@ services:
       context: .
       dockerfile: ./services/yieldwise/Dockerfile
     volumes:
-      - ./local_data:/app/local_data
+      # - ./local_data:/app/local_data
       - ./knowledge_documents:/app/knowledge_documents
       - chroma_db:/chroma_db 
       - huggingface_cache:/shared/hf_cache

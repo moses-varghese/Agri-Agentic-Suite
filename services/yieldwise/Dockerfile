@@ -1,6 +1,3 @@
-# This syntax enables the --mount=type=secret feature
-#syntax=docker/dockerfile:1
-
 FROM python:3.11
 
 WORKDIR /app
