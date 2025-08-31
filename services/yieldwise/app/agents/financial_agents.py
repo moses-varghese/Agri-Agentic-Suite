@@ -306,6 +306,7 @@ class FinancialAgent:
         8.  CRITICAL RULE: Do not invent schemes or financial details not present in the context."""
 
         user_prompt = f"Context: \"{context}\"\n\nLive Data: \"{price_estimation}\"\n\nUser Situation: \"{user_situation}\"\n\nFinancial Plan:"
+        print(f"user_prompt: {user_prompt}")
         try:
             print(f"🤖 Sending request to local LLM: {settings.LOCAL_LLM_MODEL}")
             response = await acompletion(
