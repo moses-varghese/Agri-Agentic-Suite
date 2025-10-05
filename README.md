@@ -244,3 +244,12 @@ If using the image from local data
 curl -X POST -F 'image=@local_data/leaf.jpg' http://localhost:8003/diagnose
 
 ```
+
+# Short Presentation 
+
+[▶ Watch the video on Google Drive](https://drive.google.com/file/d/16hCQDhDrLtWcuvVKq1tmMRvNYjcP2hEd/view?usp=sharing)  
+
+
+# Certificate
+
+![Certificate](images/certificate.png)  
